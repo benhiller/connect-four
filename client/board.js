@@ -8,7 +8,6 @@ function handleMove(e) {
   var col = parseInt(7*(x/350));
   try {
     game.dropCell(col);
-    sendMove(col);
     draw.drawPieces(game.board);
   } catch (err) {
     console.log(err);

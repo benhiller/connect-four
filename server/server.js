@@ -63,6 +63,7 @@ ws.createServer(function(websocket) {
       // put their opponent back into the waiting array
       var otherPlayer = player.game.currentPlayer == player ? game.waitingPlayer : game.currentPlayer;
       delete otherPlayer.game;
+      sys.puts('a');
       otherPlayer.ws.send("Opponent left");
       var opponent = waiting.shift();
       if(opponent === undefined) {

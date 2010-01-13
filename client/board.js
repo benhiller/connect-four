@@ -93,7 +93,7 @@ function hidePreview() {
 
 function updatePreview(e) {
   console.log("update");
-  if(us == game.currentPlayer && gameActive) {
+  if(gameActive && us == game.currentPlayer) {
     var x = e.pageX - $(this).offset().left;
     var col = parseInt(7*(x/350));
     if(col === previewCol) {

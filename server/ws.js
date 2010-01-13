@@ -40,25 +40,14 @@ exports.createServer = function (websocketListener) {
       handshaked = false;
 
     function handle(data) {
-      // CHANGED
-      // This seemed to have an issue with multiplexed data
-      // The fix degrades performance, but it might be necessary
-      // Necessary to be a valid message, but possible that it is
-      // multiple valid messages
-      if(data[0] == "\u0000" && data[data.length - 1] == "\ufffd") {
-        var start = 1;
-        for(var i = 1; i < data.length - 1; i++) {
-          // If we see a beginning token preceded by an end token,
-          // then we have a whole message
-          if(data[i - 1] == "\ufffd" && data[i] == "\u0000") {
-            emitter.emit("receive", data.substring(start, i - 2));
-            start = i + 1;
-          }
+      data = data.split("\ufffd");
+      for(var i = 0; i < data.length; i++) {
+        msg = data[i];
+        if(msg[0] != '\u0000') {
+          socket.close();
+        } else {
+          emitter.emit("receive", msg.slice(1));
         }
-        // change?
-        emitter.emit("receive", data.substring(start, data.length - 1));
-      } else {
-        socket.close();
       }
     }
 

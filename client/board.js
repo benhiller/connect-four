@@ -1,64 +1,62 @@
-// TODO: don't deal with previews right now
-
-// Interface:
-// currentPlayer, waitingPlayer :: Int,
-// board :: [[Int]],
-// dropCell :: Int -> (), can throw exception on bad move,
 var game;
+var gameActive = false;
 var us;
-// Interface:
-// drawEmptyBoard, drawBoard :: (),
-// drawPieces :: [[Int]] -> (),
-// drawPiece :: Int -> Int -> Int -> Bool -> ()
 var draw;
-
-// If placing piece
-// TODO  stopPreview();
 
 function handleMove(e) {
   var x = e.pageX - $(this).offset().left;
   var col = parseInt(7*(x/350));
-  // WS.send
-  //try {
+  try {
     game.dropCell(col);
     sendMove(col);
     draw.drawPieces(game.board);
-  //} catch (err) {
-  //  console.log(err);
+  } catch (err) {
+    console.log(err);
     // handle error, should only be related to trying to go in a full column
-  //  alert('bad move');
-  //}
+    alert('bad move');
+  }
 }
 
 function handleDrop(col) {
-  if(us == game.currentPlayer) {
+  stopPreview();
+  draw.drawPieces(game.board);
+  if(us == game.waitingPlayer) {
     sendMove(col);
-    draw.drawPieces(game.board);
     doneWithMove();
   } else {
+    draw.drawPieces(game.board);
     readyForMove();
   }
 }
 
 function handleWinner(id) {
-  game = undefined;
+  gameActive = false;
   doneWithMove();
-  alert(id);
+  if(id == us) {
+    $('#win').show();
+  } else {
+    $('#lose').show();
+  }
 }
 
 function newGame(turn) {
+  draw.drawEmptyBoard();
+  gameActive = true;
   game = new Game(1, 2, handleWinner, handleDrop);
+  draw.drawPieces(game.board);
   us = turn;
   if(us == 1) {
     readyForMove();
   }
   $('#waiting').hide();
   $('#left').hide();
+  $('#win').hide();
+  $('#lose').hide();
 }
 
 function gameAbortedByOpponent() {
-  game = undefined;
-  us = undefined;
+  doneWithMove();
+  gameActive = false;
   $('#left').show();
 }
 
@@ -74,41 +72,26 @@ function doneWithMove() {
   $('#board').unbind('click');
 }
 
-// Preview code
-/*
 var previewCol;
 var showP;
 
-function showPreview() {
-  if(currentPlayer == id) {
-    showP = true;
-  } else {
-    showP = false;
-  }
-}
-
+// No matter what, force the preview to be un-drawn
 function stopPreview() {
-  var canvas = document.getElementById('board');
-  var ctx = canvas.getContext('2d');
-  ctx.fillStyle = "#FFF";
-  ctx.fillRect(0, 0, 350, 50);
-  showP = false;
+  draw.clearPreview();
   previewCol = undefined;
 }
 
 function hidePreview() {
-  console.log('a');
-  ws.send("Hide preview");
-  var canvas = document.getElementById('board');
-  var ctx = canvas.getContext('2d');
-  ctx.fillStyle = "#FFF";
-  ctx.fillRect(0, 0, 350, 50);
-  showP = false;
-  previewCol = undefined;
+  if(gameActive && us == game.currentPlayer) {
+    ws.send("Hide preview");
+    draw.clearPreview();
+    previewCol = undefined;
+  }
 }
 
 function updatePreview(e) {
-  if(showP) {
+  console.log("update");
+  if(us == game.currentPlayer && gameActive) {
     var x = e.pageX - $(this).offset().left;
     var col = parseInt(7*(x/350));
     if(col === previewCol) {
@@ -116,21 +99,17 @@ function updatePreview(e) {
     } else {
       previewCol = col;
       ws.send("Preview: " + col);
-      drawPreview(col);
+      draw.drawPiece(col, 0, us, true);
     }
   }
-  console.log('update');
 }
-*/
 
 $(document).ready(function() {
   var ctx = document.getElementById('board').getContext('2d');
   draw = new Drawer(ctx, 350, 300);
   draw.drawEmptyBoard();
- // TODO preview stuff
- // $('#board').mouseenter(showPreview);
- // $('#board').mouseleave(hidePreview);
- // $('#board').mousemove(updatePreview);
+  $('#board').mouseleave(hidePreview);
+  $('#board').mousemove(updatePreview);
 });
 
 function sendMove(col) {

@@ -10,6 +10,11 @@ function Drawer(ctx, width, height) {
   this.w = width;
   this.h = height;
 
+  this.clearPreview = function() {
+    ctx.fillStyle = "#FFF";
+    ctx.fillRect(0, 0, 350, 50);
+  }
+
   this.drawPiece = function(col, row, type, preview) {
     var x, y;
     if(preview) {

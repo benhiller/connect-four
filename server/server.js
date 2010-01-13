@@ -1,5 +1,6 @@
 var sys = require('sys'),
     ws = require('./ws/lib/ws'),
+    c4 = require('../connect-four'),
     puts = sys.puts,
     inspect = sys.inspect;
 
@@ -9,19 +10,6 @@ var waiting = [];
 
 function Player(ws) {
   this.ws = ws;
-}
-
-function Game(player1, player2) {
-  this.currentPlayer = player1;
-  this.waitingPlayer = player2;
-  // Initialize an empty board
-  this.board = [];
-  for(var i = 0; i < 7; i++) {
-    this.board[i] = [];
-    for(var j = 0; j < 6; j++) {
-      this.board[i][j] = 0;
-    }
-  }
 }
 
 // Prevent exceptions from crashing the server
@@ -42,7 +30,7 @@ ws.createServer(function(websocket) {
     // Tell both players that a game was found
     player.ws.send("Game found: 1");
     opponent.ws.send("Game found: 2");
-    game = new Game(player, opponent);
+    game = c4.createGame(player, opponent, function(x) {}, function(x) {});
     player.game = game;
     opponent.game = game;
   }
@@ -71,11 +59,19 @@ ws.createServer(function(websocket) {
     } else {
       // Tell the persons opponent that they left their game,
       // put their opponent back into the waiting array
-      // TODO: Check for open player here
       var otherPlayer = player.game.currentPlayer == player ? game.waitingPlayer : game.currentPlayer;
       delete otherPlayer.game;
       otherPlayer.ws.send("Opponent left");
-      waiting.push(otherPlayer);
+      var opponent = waiting.shift();
+      if(opponent === undefined) {
+        waiting.push(otherPlayer);
+      } else {
+        opponent.ws.send("Game found: 1");
+        otherPlayer.ws.send("Game found: 2");
+        game = c4.createGame(opponent, otherPlayer, function(x) {}, function(x) {});
+        opponent.game = game;
+        otherPlayer.game = game;
+      }
     }
   });
 }).listen(8080);

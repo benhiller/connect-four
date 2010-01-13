@@ -8,7 +8,7 @@
     <script type="text/javascript" src="../connect-four.js"></script>
     <script type="text/javascript" src="board.js"></script>
     <script>
-      var ws = new WebSocket("ws://localhost:8080");
+      var ws = new WebSocket("ws://10.0.1.8:8080");
       ws.onopen = function(event) {
         $('#connecting').hide();
       }

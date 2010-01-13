@@ -38,6 +38,20 @@ ws.createServer(function(websocket) {
 
   websocket.addListener("receive", function(data) {
     puts(data);
+    if(data == "Find game") {
+      var opponent = waiting.shift();
+      if(opponent === undefined) {
+        sys.puts('waiting');
+        waiting.push(player);
+      } else {
+        sys.puts('found');
+        opponent.ws.send("Game found: 1");
+        player.ws.send("Game found: 2");
+        game = c4.createGame(opponent, player, function(x) {}, function(x) {});
+        opponent.game = game;
+        player.game = game;
+      }
+    }
     // This may be too broad, only tell other player if we are in a game
     // and the current player
     if(player.game !== undefined && player.game.currentPlayer == player) {
@@ -45,17 +59,6 @@ ws.createServer(function(websocket) {
         player.game.waitingPlayer.ws.send(data);
       } else if(data == "Hide preview") {
         player.game.waitingPlayer.ws.send(data);
-      } else if(data == "Find game") {
-        var opponent = waiting.shift();
-        if(opponent === undefined) {
-          waiting.push(otherPlayer);
-        } else {
-          opponent.ws.send("Game found: 1");
-          player.ws.send("Game found: 2");
-          game = c4.createGame(opponent, player, function(x) {}, function(x) {});
-          opponent.game = game;
-          player.game = game;
-        }
       } else {
         player.game.waitingPlayer.ws.send('Move: ' + data);
         var temp = player.game.currentPlayer;

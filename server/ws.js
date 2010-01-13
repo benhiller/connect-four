@@ -44,6 +44,7 @@ exports.createServer = function (websocketListener) {
       for(var i = 0; i < data.length - 1; i++) {
         msg = data[i];
         if(msg[0] != '\u0000') {
+          sys.puts('forcing close');
           socket.close();
         } else {
           emitter.emit("receive", msg.slice(1));

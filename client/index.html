@@ -3,32 +3,41 @@
   <head>
     <title>Connect Four</title>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="drawing.js"></script>
     <script type="text/javascript" src="../connect-four.js"></script>
     <script type="text/javascript" src="board.js"></script>
     <script>
-      var ws = new WebSocket("ws://10.0.1.8:8080");
-      ws.onopen = function(event) {
-        $('#connecting').hide();
-      }
-
-      ws.onmessage = function(event) {
-        if(event.data.match(/^Game found: [12]$/)) {
-          var turn = event.data.indexOf('1') == -1 ? 2 : 1;
-          newGame(turn);
-        } else if(event.data === "Opponent left") {
-          console.log('a');
-          gameAbortedByOpponent();
-        } else if(event.data.match(/^Move: [0-6]$/)) {
-          opponentMoved(parseInt(event.data.match(/[0-6]/)[0]));
-        } else if(event.data.match(/^Preview: [0-6]$/)) {
-          var col = event.data.match(/[0-6]/)[0];
-          draw.drawPiece(col, 0, game.currentPlayer, true);
-        } else if(event.data.match(/^Hide preview$/)) {
-          draw.clearPreview();
+      var ws;
+      $(document).ready(function() {
+        if(!("WebSocket" in window)) {
+          $('#unsupported').show();
+          $('#connecting').hide();
+          $('#waiting').hide();
+          return;
         }
-      }
+        ws = new WebSocket("ws://10.0.1.8:8080");
+        ws.onopen = function(event) {
+          $('#connecting').hide();
+        }
+
+        ws.onmessage = function(event) {
+          if(event.data.match(/^Game found: [12]$/)) {
+            var turn = event.data.indexOf('1') == -1 ? 2 : 1;
+            newGame(turn);
+          } else if(event.data === "Opponent left") {
+            console.log('a');
+            gameAbortedByOpponent();
+          } else if(event.data.match(/^Move: [0-6]$/)) {
+            opponentMoved(parseInt(event.data.match(/[0-6]/)[0]));
+          } else if(event.data.match(/^Preview: [0-6]$/)) {
+            var col = event.data.match(/[0-6]/)[0];
+            draw.drawPiece(col, 0, game.currentPlayer, true);
+          } else if(event.data.match(/^Hide preview$/)) {
+            draw.clearPreview();
+          }
+        }
+      });
 
       window.onunload = function() {
         ws.close();
@@ -46,6 +55,7 @@
     <div id="win" style="display: none">You win!</div>
     <div id="tie" style="display: none">You tie</div>
     <div id="lose" style="display: none">You lose</div>
+    <div id="unsupported" style="display: none">Sorry, you need to use a browser which supports WebSockets</div>
     <button id="again" style="display: none">Play again?</button>
   </body>
 </html>

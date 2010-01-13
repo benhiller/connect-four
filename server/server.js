@@ -1,5 +1,5 @@
 var sys = require('sys'),
-    ws = require('./ws/lib/ws'),
+    ws = require('./ws'),
     c4 = require('../connect-four'),
     puts = sys.puts,
     inspect = sys.inspect;
@@ -37,6 +37,7 @@ ws.createServer(function(websocket) {
   }
 
   websocket.addListener("receive", function(data) {
+    puts(data);
     // This may be too broad, only tell other player if we are in a game
     // and the current player
     if(player.game !== undefined && player.game.currentPlayer == player) {

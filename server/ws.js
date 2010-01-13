@@ -41,10 +41,9 @@ exports.createServer = function (websocketListener) {
 
     function handle(data) {
       data = data.split("\ufffd");
-      for(var i = 0; i < data.length; i++) {
+      for(var i = 0; i < data.length - 1; i++) {
         msg = data[i];
         if(msg[0] != '\u0000') {
-          sys.puts('forcing a close');
           socket.close();
         } else {
           emitter.emit("receive", msg.slice(1));

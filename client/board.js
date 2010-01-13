@@ -31,6 +31,7 @@ function handleDrop(col) {
 function handleWinner(id) {
   gameActive = false;
   doneWithMove();
+  $('#again').show();
   if(id == 0) {
     $("#tie").show();
   } else if(id == us) {
@@ -54,6 +55,7 @@ function newGame(turn) {
   $('#win').hide();
   $('#tie').hide();
   $('#lose').hide();
+  $('#again').hide();
 }
 
 function gameAbortedByOpponent() {
@@ -112,7 +114,13 @@ $(document).ready(function() {
   draw.drawEmptyBoard();
   $('#board').mouseleave(hidePreview);
   $('#board').mousemove(updatePreview);
+  $('#again').click(findPlayer);
 });
+
+function findPlayer() {
+  $("#again").hide();
+  ws.send("Find game");
+}
 
 function sendMove(col) {
   ws.send(col);

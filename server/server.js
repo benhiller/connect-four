@@ -45,6 +45,17 @@ ws.createServer(function(websocket) {
         player.game.waitingPlayer.ws.send(data);
       } else if(data == "Hide preview") {
         player.game.waitingPlayer.ws.send(data);
+      } else if(data == "Find game") {
+        var opponent = waiting.shift();
+        if(opponent === undefined) {
+          waiting.push(otherPlayer);
+        } else {
+          opponent.ws.send("Game found: 1");
+          player.ws.send("Game found: 2");
+          game = c4.createGame(opponent, player, function(x) {}, function(x) {});
+          opponent.game = game;
+          player.game = game;
+        }
       } else {
         player.game.waitingPlayer.ws.send('Move: ' + data);
         var temp = player.game.currentPlayer;
@@ -63,7 +74,6 @@ ws.createServer(function(websocket) {
       // put their opponent back into the waiting array
       var otherPlayer = player.game.currentPlayer == player ? game.waitingPlayer : game.currentPlayer;
       delete otherPlayer.game;
-      sys.puts('a');
       otherPlayer.ws.send("Opponent left");
       var opponent = waiting.shift();
       if(opponent === undefined) {

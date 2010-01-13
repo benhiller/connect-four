@@ -1,5 +1,7 @@
 TODO:
   Give user pause before throwing them into a game
+  Draw preview of where piece would be
   Improve drawing of pieces
   Let players gives other a URL to play them specifically
   Handle ties
+  Change server to use onWin, onDrop params of game

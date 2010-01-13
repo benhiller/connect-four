@@ -55,13 +55,21 @@ function Game(p1, p2, handleWin, handleDrop) {
 
   // Returns false if no one has won
   this.checkForWinner = function() {
+    var empty = false;
     for(var col = 0; col < 7; col++) {
       for(var row = 0; row < 6; row++) {
-        if(this.board[col][row] == 0) continue;
+        if(this.board[col][row] == 0) {
+          empty = true;
+          continue;
+        }
         if(this.checkWinnerFrom(col, row)) {
           this.handleWin(this.board[col][row]);
         }
       }
+    }
+    if(!empty) {
+      // 0 means tie
+      this.handleWin(0);
     }
   }
 }

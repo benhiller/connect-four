@@ -8,6 +8,7 @@ var sys = require('sys'),
 // An array of players waiting for a game
 var waiting = [];
 
+// If we aren't adding anything else to this object, just use the ws
 function Player(ws) {
   this.ws = ws;
 }

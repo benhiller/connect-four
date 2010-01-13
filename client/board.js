@@ -32,7 +32,9 @@ function handleDrop(col) {
 function handleWinner(id) {
   gameActive = false;
   doneWithMove();
-  if(id == us) {
+  if(id == 0) {
+    $("#tie").show();
+  } else if(id == us) {
     $('#win').show();
   } else {
     $('#lose').show();
@@ -51,6 +53,7 @@ function newGame(turn) {
   $('#waiting').hide();
   $('#left').hide();
   $('#win').hide();
+  $('#tie').hide();
   $('#lose').hide();
 }
 

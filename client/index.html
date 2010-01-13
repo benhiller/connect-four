@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Connect Four</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+    <script type="text/javascript" src="drawing.js"></script>
+    <script type="text/javascript" src="connect-four.js"></script>
+    <script type="text/javascript" src="board.js"></script>
+    <script>
+      var ws = new WebSocket("ws://localhost:8080");
+      ws.onopen = function(event) {
+        $('#connecting').hide();
+      }
+
+      ws.onmessage = function(event) {
+        if(event.data.match(/^Game found: [12]$/)) {
+          var turn = event.data.indexOf('1') == -1 ? 2 : 1;
+          newGame(turn);
+        } else if(event.data === "Opponent left") {
+          gameAbortedByOpponent();
+        } else if(event.data.match(/^Move: [0-6]$/)) {
+          opponentMoved(parseInt(event.data.match(/[0-6]/)[0]));
+        /*} else if(event.data.match(/^Preview: [0-6]$/)) {
+          var col = event.data.match(/[0-6]/)[0];
+          drawPreview(col);
+        } else if(event.data.match(/^Hide preview$/)) {
+          stopPreview();*/
+        }
+      }
+
+      // onbeforeunload v. onunload??
+      window.onbeforeunload = function() {
+        ws.close();
+      }
+    </script>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      body {
+        padding-left: 5px;
+        padding-top: 5px;
+        width: 350px;
+        margin: 0px auto;
+      }
+
+      #new-game {
+        font-size: 15px;
+        padding: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Each cell is 50x50 -->
+    <!-- 7x6 cells, so width = 7*50 + border, height = 6*50 + border -->
+    <canvas id="board" width="350" height="350"></canvas>
+    <br/>
+    <div id="connecting">Connecting to server</div>
+    <div id="waiting">Waiting to find a player</div>
+    <div id="left" style="display: none">Opponent left, waiting for a new game</div>
+  </body>
+</html>

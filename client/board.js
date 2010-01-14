@@ -121,8 +121,9 @@ $(document).ready(function() {
 });
 
 function findPlayer() {
-  $("#again, #go").hide();
   ws.send("Find game");
+  $("#again, #go").hide();
+  $('#waiting').show();
 }
 
 function sendMove(col) {

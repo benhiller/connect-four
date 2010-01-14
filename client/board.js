@@ -63,6 +63,7 @@ function newGame(turn) {
 function gameAbortedByOpponent() {
   doneWithMove();
   gameActive = false;
+  $('#again').show();
   $('#left').show();
   $('.turn').hide();
 }
@@ -80,7 +81,6 @@ function doneWithMove() {
 }
 
 var previewCol;
-var showP;
 
 // No matter what, force the preview to be un-drawn
 function stopPreview() {
@@ -97,7 +97,6 @@ function hidePreview() {
 }
 
 function updatePreview(e) {
-  console.log("update");
   if(gameActive && us == game.currentPlayer) {
     var x = e.pageX - $(this).offset().left;
     var col = parseInt(7*(x/350));
@@ -106,7 +105,7 @@ function updatePreview(e) {
     } else {
       previewCol = col;
       ws.send("Preview: " + col);
-      draw.drawPiece(col, 0, us, true);
+      draw.drawPiece(col, game.potentialRow(col), us, true);
     }
   }
 }

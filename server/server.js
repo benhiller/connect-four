@@ -56,22 +56,12 @@ ws.createServer(function(websocket) {
     // Remove the person who left from the waiting array, if they were in it
     if(openPlayersIdx != -1) {
       waiting.splice(openPlayersIdx, 1);
-    } else {
+    } else if(player.game !== undefined && player.game.inProgress) {
       // Tell the persons opponent that they left their game,
       // put their opponent back into the waiting array
       var otherPlayer = player.game.currentPlayer == player ? game.waitingPlayer : game.currentPlayer;
       delete otherPlayer.game;
       otherPlayer.ws.send("Opponent left");
-      var opponent = waiting.shift();
-      if(opponent === undefined) {
-        waiting.push(otherPlayer);
-      } else {
-        opponent.ws.send("Game found: 1");
-        otherPlayer.ws.send("Game found: 2");
-        game = c4.createGame(opponent, otherPlayer, function(x) {}, function(x) {});
-        opponent.game = game;
-        otherPlayer.game = game;
-      }
     }
   });
 }).listen(8080);

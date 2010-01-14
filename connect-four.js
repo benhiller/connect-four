@@ -1,6 +1,7 @@
 function Game(p1, p2, handleWin, handleDrop) {
   this.currentPlayer = p1;
   this.waitingPlayer = p2;
+  this.inProgress = true;
   this.handleWin = handleWin;
   this.handleDrop = handleDrop;
   this.board = [];
@@ -61,15 +62,28 @@ function Game(p1, p2, handleWin, handleDrop) {
         if(this.board[col][row] == 0) {
           empty = true;
           continue;
-        }
-        if(this.checkWinnerFrom(col, row)) {
+        } else if(this.checkWinnerFrom(col, row)) {
+          this.inProgress = false;
           this.handleWin(this.board[col][row]);
+          return;
         }
       }
     }
     if(!empty) {
+        this.inProgress = false;
       // 0 means tie
       this.handleWin(0);
+    }
+  }
+
+  this.potentialRow = function(col) {
+    for(var row = 5; row >= 0; row--) {
+      if(this.board[col][row] == 0) {
+        return row;
+        break;
+      } else if(this.board[col][row] != 0 && row == 0) {
+        return undefined;
+      }
     }
   }
 }

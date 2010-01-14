@@ -4,3 +4,4 @@ TODO:
   Improve drawing of pieces
   Animate pieces dropping
   Let players gives other a URL to play them specifically
+  Test post-commit hook

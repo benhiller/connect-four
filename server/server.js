@@ -22,19 +22,6 @@ ws.createServer(function(websocket) {
 
   // Handling a new player
   var player = new Player(websocket);
-  var opponent = waiting.shift();
-  // No open players
-  if(opponent === undefined) {
-    // Put the player on the queue, so another player can find them
-    waiting.push(player);
-  } else {
-    // Tell both players that a game was found
-    player.ws.send("Game found: 1");
-    opponent.ws.send("Game found: 2");
-    game = c4.createGame(player, opponent, function(x) {}, function(x) {});
-    player.game = game;
-    opponent.game = game;
-  }
 
   websocket.addListener("receive", function(data) {
     if(data == "Find game") {

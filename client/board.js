@@ -64,6 +64,7 @@ function gameAbortedByOpponent() {
   doneWithMove();
   gameActive = false;
   $('#left').show();
+  $('.turn').hide();
 }
 
 function opponentMoved(col) {
@@ -116,11 +117,11 @@ $(document).ready(function() {
   draw.drawEmptyBoard();
   $('#board').mouseleave(hidePreview);
   $('#board').mousemove(updatePreview);
-  $('#again').click(findPlayer);
+  $('#again, #go').click(findPlayer);
 });
 
 function findPlayer() {
-  $("#again").hide();
+  $("#again, #go").hide();
   ws.send("Find game");
 }
 

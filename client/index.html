@@ -19,6 +19,7 @@
         ws = new WebSocket("ws://10.0.1.8:8080");
         ws.onopen = function(event) {
           $('#connecting').hide();
+          $('#go').show();
         }
 
         ws.onmessage = function(event) {
@@ -49,7 +50,7 @@
     <canvas id="board" width="350" height="350"></canvas>
     <br/>
     <div id="connecting">Connecting to server</div>
-    <div id="waiting">Waiting to find a player</div>
+    <div id="waiting" style="display: none">Waiting to find a player</div>
     <div id="left" style="display: none">Opponent left, waiting for a new game</div>
     <div id="win" style="display: none">You win!</div>
     <div id="tie" style="display: none">You tie</div>
@@ -58,5 +59,6 @@
     <div id="yourturn" class="turn" style="display: none">Your turn</div>
     <div id="unsupported" style="display: none">Sorry, you need to use a browser which supports WebSockets</div>
     <button id="again" style="display: none">Play again?</button>
+    <button id="go" style="display: none">Play a game?</button>
   </body>
 </html>

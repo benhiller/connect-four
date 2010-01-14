@@ -8,7 +8,6 @@ function handleMove(e) {
   var col = parseInt(7*(x/350));
   try {
     game.dropCell(col);
-    draw.drawPieces(game.board);
   } catch (err) {
     console.log(err);
     // handle error, should only be related to trying to go in a full column
@@ -23,7 +22,6 @@ function handleDrop(col) {
     sendMove(col);
     doneWithMove();
   } else {
-    draw.drawPieces(game.board);
     readyForMove();
   }
 }
@@ -45,7 +43,6 @@ function newGame(turn) {
   draw.drawEmptyBoard();
   gameActive = true;
   game = new Game(1, 2, handleWinner, handleDrop);
-  draw.drawPieces(game.board);
   us = turn;
   if(us == 1) {
     readyForMove();

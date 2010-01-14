@@ -18,6 +18,7 @@ function handleMove(e) {
 
 function handleDrop(col) {
   stopPreview();
+  draw.animatePiece();
   draw.drawPieces(game.board);
   if(us == game.waitingPlayer) {
     sendMove(col);

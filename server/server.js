@@ -37,14 +37,11 @@ ws.createServer(function(websocket) {
   }
 
   websocket.addListener("receive", function(data) {
-    puts(data);
     if(data == "Find game") {
       var opponent = waiting.shift();
       if(opponent === undefined) {
-        sys.puts('waiting');
         waiting.push(player);
       } else {
-        sys.puts('found');
         opponent.ws.send("Game found: 1");
         player.ws.send("Game found: 2");
         game = c4.createGame(opponent, player, function(x) {}, function(x) {});

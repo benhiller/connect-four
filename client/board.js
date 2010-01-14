@@ -17,7 +17,7 @@ function handleMove(e) {
 
 function handleDrop(col) {
   stopPreview();
-  $('#turn').toggle();
+  $('.turn').toggle();
   draw.drawPieces(game.board);
   if(us == game.waitingPlayer) {
     sendMove(col);
@@ -30,7 +30,7 @@ function handleDrop(col) {
 function handleWinner(id) {
   gameActive = false;
   doneWithMove();
-  $('#turn').hide();
+  $('.turn').hide();
   $('#again').show();
   if(id == 0) {
     $("#tie").show();

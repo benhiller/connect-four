@@ -83,7 +83,7 @@ function Drawer(ctx, width, height) {
         this.ctx.drawBlackPiece(x, y, false);
         break;
     }
-    if(preview) {
+    if(preview && row !== undefined) {
       y = this.h*(row/6) + 75;
       switch(type) {
         case 1:

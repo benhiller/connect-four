@@ -2,7 +2,7 @@ var game;
 var gameActive = false;
 var us;
 var draw;
-var sound = new Audio('Pop.mp3');
+var sound = new Audio('Pop.ogg');
 
 function handleMove(e) {
   var x = e.pageX - $(this).offset().left;

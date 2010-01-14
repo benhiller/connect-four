@@ -102,9 +102,4 @@ function Drawer(ctx, width, height) {
     }
     this.drawPieces(board);
   }
-
-  this.animatePiece = function() {
-    this.ctx.fillStyle = "#000";
-    this.ctx.fillCircle(100, 100, 25);
-  }
 }

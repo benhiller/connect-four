@@ -2,7 +2,6 @@ var game;
 var gameActive = false;
 var us;
 var draw;
-var sound = new Audio('Pop.ogg');
 
 function handleMove(e) {
   var x = e.pageX - $(this).offset().left;
@@ -24,7 +23,6 @@ function handleDrop(col) {
     sendMove(col);
     doneWithMove();
   } else {
-    sound.play();
     readyForMove();
   }
 }

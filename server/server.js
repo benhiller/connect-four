@@ -82,7 +82,7 @@ ws.createServer(function(websocket) {
         player.game.waitingPlayer.ws.send(data);
       } else if(data == "Hide preview") {
         player.game.waitingPlayer.ws.send(data);
-      } else {
+      } else if(data.match(/^[0-6]$/)) {
         player.game.dropCell(parseInt(data));
       }
     }

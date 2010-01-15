@@ -83,7 +83,7 @@ ws.createServer(function(websocket) {
       } else if(data == "Hide preview") {
         player.game.waitingPlayer.ws.send(data);
       } else {
-        player.game.dropCell(data);
+        player.game.dropCell(parseInt(data));
       }
     }
   })

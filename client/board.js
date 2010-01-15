@@ -98,7 +98,7 @@ function updatePreview(e) {
   if(gameActive && us == game.currentPlayer) {
     var x = e.pageX - $(this).offset().left;
     var col = parseInt(7*((x - 13)/350));
-    if(col === previewCol) {
+    if(col === previewCol || col > 6) {
       return;
     } else {
       previewCol = col;

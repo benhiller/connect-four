@@ -58,13 +58,13 @@ function Drawer(ctx, width, height) {
   this.clearPreview = function() {
     ctx.fillStyle = "#FFF";
     ctx.fillRect(10, 0, 350, 50);
-    this.drawPieces(this.oldBoard);
+    this.drawPieces(this.oldBoard, false);
   }
 
-  this.drawPiece = function(col, row, type, preview) {
+  this.drawPiece = function(col, row, type, preview, emptyTrans) {
     var x, y;
     if(preview) {
-      this.drawPieces(this.oldBoard);
+      this.drawPieces(this.oldBoard, false);
       ctx.fillStyle = "#FFF";
       ctx.fillRect(10, 0, 350, 50);
       x = this.w*(col/7) + 25 + 13;
@@ -75,7 +75,8 @@ function Drawer(ctx, width, height) {
     }
     switch(type) {
       case 0:
-        this.ctx.fillStyle = "#FFF";
+        this.ctx.fillStyle = emptyTrans ? "rgba(255, 255, 255, 0.5)" : "#FFF";
+        console.log(this.ctx.fillStyle);
         this.ctx.fillCircle(x, y, 22);
         break;
       case 1:
@@ -98,12 +99,12 @@ function Drawer(ctx, width, height) {
     }
   }
 
-  this.drawPieces = function(board) {
+  this.drawPieces = function(board, emptyTrans) {
     this.oldBoard = board;
     this.drawBoard();
     for(var col = 0; col < 7; col++) {
       for(var row = 0; row < 6; row++) {
-        this.drawPiece(col, row, board[col][row]);
+        this.drawPiece(col, row, board[col][row], false, emptyTrans);
       }
     }
   }
@@ -131,6 +132,33 @@ function Drawer(ctx, width, height) {
         board[i][j] = 0;
       }
     }
-    this.drawPieces(board);
+    this.drawPieces(board, false);
+  }
+
+  this.animate = function() {
+    var self = this;
+    var y = 50;
+    var vel = 0;
+    var acc = 9.8;
+    var maxY = 320;
+    var step = 10;
+    var stop = false;
+    var draw = function() {
+      self.clearPreview();
+      self.ctx.fillStyle = "#888";
+      self.ctx.fillCircle(38, y, 22);
+      self.drawPieces(self.oldBoard, true);
+      y += vel * step/30;
+      vel += acc * step/30;
+      if(stop) {
+        return;
+      }
+      if(y >= maxY) {
+        y = maxY;
+        stop = true;
+      }
+      setTimeout(arguments.callee, step);
+    }
+    setTimeout(draw, step);
   }
 }

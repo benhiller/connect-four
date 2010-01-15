@@ -17,7 +17,7 @@
           $('#waiting').hide();
           return;
         }
-        ws = new WebSocket("ws://10.0.1.8:8080");
+        ws = new WebSocket("ws://" + window.location.hostname + ":8080");
         ws.onopen = function(event) {
           $('#connecting').hide();
           $('#go').show();
@@ -34,7 +34,7 @@
             opponentMoved(parseInt(event.data.match(/[0-6]/)[0]));
           } else if(event.data.match(/^Preview: [0-6]$/)) {
             var col = event.data.match(/[0-6]/)[0];
-            draw.drawPiece(col, game.potentialRow(col), game.currentPlayer, true);
+            draw.drawPiece(col, game.potentialRow(col), game.currentPlayer, true, false);
           } else if(event.data.match(/^Hide preview$/)) {
             draw.clearPreview();
           } else if(event.data.match(/^ID: [0-9a-zA-z]+$/)) {

@@ -18,7 +18,7 @@ function handleMove(e) {
 function handleDrop(col) {
   stopPreview();
   $('.turn').toggle();
-  draw.drawPieces(game.board);
+  draw.drawPieces(game.board, false);
   if(us == game.waitingPlayer) {
     sendMove(col);
     doneWithMove();
@@ -103,7 +103,7 @@ function updatePreview(e) {
     } else {
       previewCol = col;
       ws.send("Preview: " + col);
-      draw.drawPiece(col, game.potentialRow(col), us, true);
+      draw.drawPiece(col, game.potentialRow(col), us, true, false);
     }
   }
 }
@@ -119,6 +119,7 @@ $(document).ready(function() {
   $('#init-friend').click(getID);
   $('#conn-friend').click(useID);
   $('#join-match-btn').click(joinMatch);
+  draw.animate();
 });
 
 function findPlayer() {

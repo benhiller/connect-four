@@ -33,17 +33,19 @@ CanvasRenderingContext2D.prototype.drawPiece = function(outterStart, outterEnd, 
 
 CanvasRenderingContext2D.prototype.drawRedPiece = function(x, y, trans) {
   var alpha = trans ? 0.5 : 1.0;
+  var alphaInner = trans ? 0.15 : 1.0;
   this.drawPiece("rgba(218, 59, 33," + alpha + ")", "rgba(198, 39, 6," + alpha + ")",
-                 "rgba(180, 17, 1," + alpha +")",   "rgba(255, 0, 0," + alpha +")",
-                 "rgba(234, 11, 0," + alpha +")",   "rgba(194, 119, 9," + alpha +")",
+                 "rgba(180, 17, 1," + alphaInner + ")",   "rgba(255, 0, 0," + alphaInner +")",
+                 "rgba(234, 11, 0," + alphaInner + ")",   "rgba(194, 119, 9," + alphaInner +")",
                  x, y);
 }
 
 CanvasRenderingContext2D.prototype.drawBlackPiece = function(x, y, trans) {
   var alpha = trans ? 0.5 : 1.0;
+  var alphaInner = trans ? 0.10 : 1.0;
   this.drawPiece("rgba(46, 46, 46," + alpha +")", "rgba(9, 9, 9," + alpha +")",
-                 "rgba(9, 9, 9," + alpha +")",    "rgba(46, 46, 46," + alpha +")",
-                 "rgba(85, 85, 85," + alpha +")", "rgba(9, 9, 9," + alpha +")",
+                 "rgba(9, 9, 9," + alphaInner +")",    "rgba(46, 46, 46," + alphaInner +")",
+                 "rgba(85, 85, 85," + alphaInner +")", "rgba(9, 9, 9," + alphaInner + ")",
                  x, y);
 }
 
@@ -55,7 +57,7 @@ function Drawer(ctx, width, height) {
 
   this.clearPreview = function() {
     ctx.fillStyle = "#FFF";
-    ctx.fillRect(0, 0, 350, 50);
+    ctx.fillRect(10, 0, 350, 50);
     this.drawPieces(this.oldBoard);
   }
 
@@ -64,11 +66,11 @@ function Drawer(ctx, width, height) {
     if(preview) {
       this.drawPieces(this.oldBoard);
       ctx.fillStyle = "#FFF";
-      ctx.fillRect(0, 0, 350, 50);
-      x = this.w*(col/7) + 25;
+      ctx.fillRect(10, 0, 350, 50);
+      x = this.w*(col/7) + 25 + 13;
       y = 25;
     } else {
-      x = this.w*(col/7) + 25;
+      x = this.w*(col/7) + 25 + 13;
       y = this.h*(row/6) + 75;
     }
     switch(type) {
@@ -108,12 +110,20 @@ function Drawer(ctx, width, height) {
 
   this.drawBoard = function() {
     this.ctx.fillStyle = "#CAC90F";
-    this.ctx.fillRect(0, 50, this.w, this.h);
+    this.ctx.fillRect(10, 50, this.w + 6, this.h);
+    var edge = this.ctx.createLinearGradient(0, 50, 0, 400);
+    edge.addColorStop(0.0, "rgb(93, 179, 254)");
+    edge.addColorStop(0.65, "rgb(93, 179, 254)");
+    edge.addColorStop(0.75, "rgb(70, 139, 200)");
+    edge.addColorStop(1, "rgb(93, 179, 245)");
+
+    this.ctx.fillStyle = edge;
+    this.ctx.fillRect(0, 50, 10, 400);
+    this.ctx.fillRect(366, 50, 10, 400);
   }
 
   this.drawEmptyBoard = function() {
-    this.ctx.fillStyle = "#CAC90F";
-    this.ctx.fillRect(0, 50, this.w, this.h);
+    this.drawBoard();
     var board = [];
     for(var i = 0; i < 7; i++) {
       board[i] = [];

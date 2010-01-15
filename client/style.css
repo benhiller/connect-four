@@ -1,6 +1,11 @@
 * {
+  font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
   padding: 0;
   margin: 0;
+}
+
+a {
+  color: #fff;
 }
 
 body {
@@ -13,4 +18,55 @@ body {
 #new-game {
   font-size: 15px;
   padding: 2px;
+}
+
+#notices {
+  margin-left: auto;
+  margin-right: auto;
+  width: 350px;
+  text-align: center;
+}
+
+#actions {
+  text-align: center;
+  width: 376px;
+}
+
+.turn {
+
+}
+
+button {
+  background: -webkit-gradient(linear, left top, left bottom, from(#FEFFFE), to(#c4c4c4));
+  border: 1px solid #A8A8A8;
+  padding: 8px;
+  font-size: 20px;
+  -webkit-border-radius: 8px;
+  text-shadow: 0px 1px #fff;
+}
+
+button:hover {
+  background: -webkit-gradient(linear, left top, left bottom, from(#f4f4f4), to(#aaa));
+  border: 1px solid #8e8e8e;
+}
+
+button:active {
+  background: -webkit-gradient(linear, left bottom, left top, from(#ddd), to(#aaa));
+  border: 1px solid #8e8e8e;
+}
+
+#notices div {
+  color: #FFF;
+  position: absolute;
+  top: 360px;
+  text-align: center;
+  width: 326px;
+  padding: 5px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin: 5px;
+  margin-left: 20px;
+  border: 1px solid #505050;
+  background: rgba(74, 74, 74, 0.85);
+  -webkit-border-radius: 8px;
 }

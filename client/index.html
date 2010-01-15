@@ -20,6 +20,7 @@
         ws.onopen = function(event) {
           $('#connecting').hide();
           $('#go').show();
+          $('#friend').show();
         }
 
         ws.onmessage = function(event) {
@@ -35,6 +36,15 @@
             draw.drawPiece(col, game.potentialRow(col), game.currentPlayer, true);
           } else if(event.data.match(/^Hide preview$/)) {
             draw.clearPreview();
+          } else if(event.data.match(/^ID: [0-9a-zA-z]+$/)) {
+            var id = event.data.split("ID: ")[1];
+            $('#notices > *').hide();
+            $('#match-id').text(id);
+            $('#match-id-text').show();
+          } else if(event.data == "Invalid ID") {
+            $('#failed').show();
+            $('#again, #friend').show();
+            $('#match-id-input').val('');
           }
         }
       });
@@ -47,18 +57,29 @@
   <body>
     <!-- Each cell is 50x50 -->
     <!-- 7x6 cells, so width = 7*50 + border, height = 6*50 + border -->
-    <canvas id="board" width="350" height="350"></canvas>
+    <canvas id="board" width="376" height="450"></canvas>
     <br/>
-    <div id="connecting">Connecting to server</div>
-    <div id="waiting" style="display: none">Waiting to find a player</div>
-    <div id="left" style="display: none">Sorry, your opponent left, I'm sure you would've won.</div>
-    <div id="win" style="display: none">You win!</div>
-    <div id="tie" style="display: none">You tie</div>
-    <div id="lose" style="display: none">You lose</div>
-    <div id="theirturn" class="turn" style="display: none">Their turn</div>
-    <div id="yourturn" class="turn" style="display: none">Your turn</div>
-    <div id="unsupported" style="display: none">Sorry, you need to use a browser which supports WebSockets</div>
-    <button id="again" style="display: none">Play again?</button>
-    <button id="go" style="display: none">Play a game?</button>
+    <div id="actions">
+      <button id="again" style="display: none">Play again?</button>
+      <button id="go" style="display: none">Play a game?</button>
+      <button id="friend" style="display: none">Play with a friend?</button>
+      <button id="init-friend" style="display: none">Create a match</button>
+      <button id="conn-friend" style="display: none">Join a match</button>
+      <div id="join-match" style="display: none">Join match ID: <input id="match-id-input" type="text" name="match-id" /> <button id="join-match-btn">Go</button></div>
+    </div>
+    <div id="notices">
+      <div id="theirturn" class="turn" style="display: none">Their turn</div>
+      <div id="yourturn" class="turn" style="display: none">Your turn</div>
+      <div id="connecting">Connecting to server</div>
+      <div id="match-id-text" style="display: none">Give your friend the ID: <span id="match-id"></span></div>
+      <div id="joining-match" style="display: none">Joining match</div>
+      <div id="failed" style="display: none">Joining match failed</div>
+      <div id="waiting" style="display: none">Waiting to find a player</div>
+      <div id="left" style="display: none">Sorry, your opponent left.</div>
+      <div id="win" style="display: none">You win!</div>
+      <div id="tie" style="display: none">You tie</div>
+      <div id="lose" style="display: none">You lose</div>
+      <div id="unsupported" style="display: none">Sorry, you need to use a <a href="http://www.google.com/chrome">browser</a> which supports WebSockets.</div>
+    </div>
   </body>
 </html>

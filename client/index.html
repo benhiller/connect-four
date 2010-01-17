@@ -47,6 +47,7 @@
             $('#match-id').text(id);
             $('#match-id-text').show();
           } else if(event.data == "Invalid ID") {
+            $('#notices > *').hide();
             $('#failed').show();
             $('#again, #friend').show();
             $('#match-id-input').val('');
@@ -70,7 +71,7 @@
       <button id="friend" style="display: none">Play with a friend</button>
       <button id="init-friend" style="display: none">Create a match</button>
       <button id="conn-friend" style="display: none">Join a match</button>
-      <div id="join-match" style="display: none">Join match ID: <input id="match-id-input" type="text" name="match-id" /> <button id="join-match-btn">Go</button></div>
+      <div id="join-match" style="display: none">Join match: <input title="Get the ID from your friend who created the match" id="match-id-input" type="text" name="match-id" /> <button id="join-match-btn">Go</button></div>
     </div>
     <div id="notices">
       <div id="theirturn" class="turn" style="display: none">Their turn</div>

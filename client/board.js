@@ -148,6 +148,12 @@ function useID() {
 
 function joinMatch() {
   $('#actions > *').hide();
+  if($('#match-id-input').val() == '') {
+    $('#notices > *').hide();
+    $('#failed').show();
+    $('#again, #friend').show();
+    return;
+  }
   ws.send('Use ID: ' + $('#match-id-input').val());
   $('#notices div').hide();
   $('#joining-match').show();

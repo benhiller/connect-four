@@ -17,7 +17,11 @@
           $('#waiting').hide();
           return;
         }
-        ws = new WebSocket("ws://" + window.location.hostname + ":8080");
+        if(window.location.hostname) {
+          ws = new WebSocket("ws://" + window.location.hostname + ":8080");
+        } else {
+          ws = new WebSocket("ws://localhost:8080");
+        }
         ws.onopen = function(event) {
           $('#connecting').hide();
           $('#go').show();

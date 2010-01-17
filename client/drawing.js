@@ -75,8 +75,7 @@ function Drawer(ctx, width, height) {
     }
     switch(type) {
       case 0:
-        this.ctx.fillStyle = emptyTrans ? "rgba(255, 255, 255, 0.5)" : "#FFF";
-        console.log(this.ctx.fillStyle);
+        this.ctx.fillStyle = emptyTrans ? "rgba(255, 255, 255, 0.0)" : "#FFF";
         this.ctx.fillCircle(x, y, 22);
         break;
       case 1:
@@ -111,7 +110,17 @@ function Drawer(ctx, width, height) {
 
   this.drawBoard = function() {
     this.ctx.fillStyle = "#CAC90F";
-    this.ctx.fillRect(10, 50, this.w + 6, this.h);
+    for(var i = 0; i < 7; i++) {
+      this.ctx.beginPath();
+      for(var j = 0; j < 6; j++) {
+        var x = this.w*(i/7) + 25 + 13;
+        var y = this.h*(j/6) + 75;
+        this.ctx.arc(x, y, 22, 0, Math.PI*2, true);
+      }
+      this.ctx.rect(10 + i*(this.w + 6)/7, 50, (this.w + 6)/7, this.h);
+      this.ctx.closePath();
+      this.ctx.fill();
+    }
     var edge = this.ctx.createLinearGradient(0, 50, 0, 400);
     edge.addColorStop(0.0, "rgb(93, 179, 254)");
     edge.addColorStop(0.65, "rgb(93, 179, 254)");
@@ -135,30 +144,62 @@ function Drawer(ctx, width, height) {
     this.drawPieces(board, false);
   }
 
-  this.animate = function() {
+  this.animateDrop = function(type, col, row, duration) {
     var self = this;
-    var y = 50;
-    var vel = 0;
-    var acc = 9.8;
-    var maxY = 320;
-    var step = 10;
-    var stop = false;
-    var draw = function() {
+    var oldBoard = this.oldBoard;
+    var draw = function(y) {
       self.clearPreview();
       self.ctx.fillStyle = "#888";
-      self.ctx.fillCircle(38, y, 22);
-      self.drawPieces(self.oldBoard, true);
-      y += vel * step/30;
-      vel += acc * step/30;
-      if(stop) {
-        return;
+      var x = self.w*(col/7) + 25 + 13;
+      if(type == 1) {
+        self.ctx.drawRedPiece(x, y, false);
+      } else {
+        self.ctx.drawBlackPiece(x, y, false);
       }
-      if(y >= maxY) {
-        y = maxY;
-        stop = true;
+      self.drawPieces(oldBoard, true);
+    }
+    var endY = this.h*(row/6) + 75;
+    console.log(row);
+    this.animate(50, endY - 50, draw, duration, 5, col, row, type);
+  }
+
+  this.animate = function(startY, endY, draw, duration, step, col, row, type) {
+    var draw = draw;
+    var start = new Date().getTime();
+    var elapsed = 0;
+    var self = this;
+    var update = function() {
+      var now = new Date().getTime();
+      elapsed += now - start;
+      if(elapsed > duration) {
+        elapsed = duration;
+      }
+      start = now;
+      var y = easeOutBounce(elapsed, startY, endY, duration);
+      draw(y);
+      if(elapsed == duration) {
+        self.oldBoard[col][row] = type;
+        return;
       }
       setTimeout(arguments.callee, step);
     }
-    setTimeout(draw, step);
+    setTimeout(update, step);
+  }
+}
+
+// taken from jquery easing plugin
+// t = current time
+// b = start value
+// c = change in value -- NOT end value
+// d = total time
+function easeOutBounce(t, b, c, d) {
+  if ((t/=d) < (1/2.75)) {
+    return c*(7.5625*t*t) + b;
+  } else if (t < (2/2.75)) {
+    return c*(7.5625*(t-=(1.5/2.75))*t + .75) + b;
+  } else if (t < (2.5/2.75)) {
+    return c*(7.5625*(t-=(2.25/2.75))*t + .9375) + b;
+  } else {
+    return c*(7.5625*(t-=(2.625/2.75))*t + .984375) + b;
   }
 }

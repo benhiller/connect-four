@@ -18,7 +18,8 @@ function handleMove(e) {
 function handleDrop(col) {
   stopPreview();
   $('.turn').toggle();
-  draw.drawPieces(game.board, false);
+  var duration = 500;
+  draw.animateDrop(game.waitingPlayer, col, game.potentialRow(col) + 1 || 0, duration);
   if(us == game.waitingPlayer) {
     sendMove(col);
     doneWithMove();
@@ -119,7 +120,6 @@ $(document).ready(function() {
   $('#init-friend').click(getID);
   $('#conn-friend').click(useID);
   $('#join-match-btn').click(joinMatch);
-  draw.animate();
 });
 
 function findPlayer() {

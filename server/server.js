@@ -83,7 +83,13 @@ ws.createServer(function(websocket) {
       } else if(data == "Hide preview") {
         player.game.waitingPlayer.ws.send(data);
       } else if(data.match(/^[0-6]$/)) {
-        player.game.dropCell(parseInt(data));
+        try {
+          player.game.dropCell(parseInt(data));
+        } catch(err) {
+          puts("Bad move");
+          // Handle in some fashion...
+          // maybe abort game, maybe ask player for another move
+        }
       }
     }
   })

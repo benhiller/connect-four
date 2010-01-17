@@ -159,7 +159,6 @@ function Drawer(ctx, width, height) {
       self.drawPieces(oldBoard, true);
     }
     var endY = this.h*(row/6) + 75;
-    console.log(row);
     this.animate(50, endY - 50, draw, duration, 5, col, row, type);
   }
 

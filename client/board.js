@@ -6,12 +6,13 @@ var draw;
 function handleMove(e) {
   var x = e.pageX - $(this).offset().left;
   var col = parseInt(7*((x - 13)/350));
+  $('#badmove').hide();
   try {
     game.dropCell(col);
   } catch (err) {
     console.log(err);
     // handle error, should only be related to trying to go in a full column
-    alert('bad move');
+    $('#badmove').show();
   }
 }
 

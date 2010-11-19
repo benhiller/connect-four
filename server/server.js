@@ -1,7 +1,11 @@
 var sys = require('sys'),
-    ws = require('./ws'),
+    io = require('socket.io'),
+    fs = require('fs'),
+    url = require('url'),
     c4 = require('../connect-four'),
-    puts = sys.puts,
+    p = require('path'),
+    http = require('http'),
+    puts = sys.debug,
     inspect = sys.inspect;
 
 // State
@@ -20,36 +24,57 @@ function randomString(length) {
   return randomstring;
 }
 
-// If we aren't adding anything else to this object, just use the ws
-function Player(ws) {
-  this.ws = ws;
+function Player(client) {
+  this.client = client;
 }
 
-// Prevent exceptions from crashing the server
-process.addListener("uncaughtException", function(e) {
-  puts(inspect(e));
+var contentTypes = {
+  '.html' : 'text/html',
+  '.js' : 'text/javascript',
+  '.css' : 'text/css',
+  '.png' : 'image/png'
+};
+
+var server = http.createServer(function(req, res) {
+  var path = url.parse(req.url).pathname;
+  if (path == '/') {
+    path = '/index.html';
+  } else if (path == '/connect-four.js') {
+    path = '/../connect-four.js';
+  }
+
+  fs.readFile(__dirname + '/../client' + path, function(err, data) {
+    if (err) {
+      res.writeHead(404);
+      res.write('404');
+      res.end();
+    }
+    res.writeHead(200, { 'Content-Type' : contentTypes[p.extname(path)] });
+    res.write(data, 'utf8');
+    res.end();
+  });
 });
+server.listen(80);
 
-ws.createServer(function(websocket) {
-
+var socket = io.listen(server);
+socket.on('connection', function(client) {
   // Handling a new player
-  var player = new Player(websocket);
+  var player = new Player(client);
 
   var handleDrop = function(col) {
-    player.game.currentPlayer.ws.send('Move: ' + col);
+    player.game.currentPlayer.client.send({ data : 'Move: ' + col });
   };
 
-  var handleWin = function(id) {
-  };
+  var handleWin = function(id) { };
 
-  websocket.addListener("receive", function(data) {
+  client.on('message', function(data) {
     if(data == "Find game") {
       var opponent = waiting.shift();
       if(opponent === undefined) {
         waiting.push(player);
       } else {
-        opponent.ws.send("Game found: 1");
-        player.ws.send("Game found: 2");
+        opponent.client.send({ data : "Game found: 1" });
+        player.client.send({ data: "Game found: 2" });
         game = c4.createGame(opponent, player, handleWin, handleDrop);
         opponent.game = game;
         player.game = game;
@@ -59,29 +84,29 @@ ws.createServer(function(websocket) {
       while(id in matches) {
         id = randomString(10);
       }
-      player.ws.send("ID: " + id);
+      player.client.send({ data: "ID: " + id });
       matches[id] = player;
     } else if(data.match(/^Use ID: [0-9a-zA-Z]+/)) {
       var id = data.split("Use ID: ")[1];
       if(id in matches) {
         var opp = matches[id];
         delete matches[id];
-        opp.ws.send("Game found: 1");
-        player.ws.send("Game found: 2");
+        opp.client.send({ data : "Game found: 1" });
+        player.client.send({ data : "Game found: 2"});
         game = c4.createGame(opp, player, handleWin, handleDrop);
         opp.game = game;
         player.game = game;
       } else {
-        player.ws.send('Invalid ID');
+        player.client.send({ data : 'Invalid ID' });
       }
     }
     // This may be too broad, only tell other player if we are in a game
     // and the current player
     if(player.game !== undefined && player.game.currentPlayer == player) {
       if(data.match(/^Preview: [0-6]$/)) {
-        player.game.waitingPlayer.ws.send(data);
+        player.game.waitingPlayer.client.send({ data : data });
       } else if(data == "Hide preview") {
-        player.game.waitingPlayer.ws.send(data);
+        player.game.waitingPlayer.client.send({ data : data });
       } else if(data.match(/^[0-6]$/)) {
         try {
           player.game.dropCell(parseInt(data));
@@ -92,8 +117,9 @@ ws.createServer(function(websocket) {
         }
       }
     }
-  })
- .addListener("close", function() {
+  });
+
+  client.on('disconnect', function() {
     var openPlayersIdx = waiting.indexOf(player);
     // Remove the person who left from the waiting array, if they were in it
     if(openPlayersIdx != -1) {
@@ -103,7 +129,12 @@ ws.createServer(function(websocket) {
       // put their opponent back into the waiting array
       var otherPlayer = player.game.currentPlayer == player ? game.waitingPlayer : game.currentPlayer;
       delete otherPlayer.game;
-      otherPlayer.ws.send("Opponent left");
+      otherPlayer.client.send({ data: "Opponent left" });
     }
   });
-}).listen(8080);
+});
+
+// Prevent exceptions from crashing the server
+process.addListener("uncaughtException", function(e) {
+  puts(inspect(e));
+});

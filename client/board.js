@@ -90,7 +90,7 @@ function stopPreview() {
 
 function hidePreview() {
   if(gameActive && us == game.currentPlayer) {
-    ws.send("Hide preview");
+    socket.send("Hide preview");
     draw.clearPreview();
     previewCol = undefined;
   }
@@ -104,7 +104,7 @@ function updatePreview(e) {
       return;
     } else {
       previewCol = col;
-      ws.send("Preview: " + col);
+      socket.send("Preview: " + col);
       draw.drawPiece(col, game.potentialRow(col), us, true, false);
     }
   }
@@ -124,7 +124,7 @@ $(document).ready(function() {
 });
 
 function findPlayer() {
-  ws.send("Find game");
+  socket.send("Find game");
   $("#actions > *").hide();
   $('#notices div').hide();
   $('#waiting').show();
@@ -137,7 +137,7 @@ function initFriend() {
 
 function getID() {
   $('#actions > *').hide();
-  ws.send('Need ID');
+  socket.send('Need ID');
   $('#waiting').show();
 }
 
@@ -154,12 +154,12 @@ function joinMatch() {
     $('#again, #friend').show();
     return;
   }
-  ws.send('Use ID: ' + $('#match-id-input').val());
+  socket.send('Use ID: ' + $('#match-id-input').val());
   $('#notices div').hide();
   $('#joining-match').show();
 }
 
 function sendMove(col) {
-  ws.send(col);
+  socket.send(col);
   doneWithMove();
 }
